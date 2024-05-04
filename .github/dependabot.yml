@@ -12,10 +12,3 @@ updates:
       timezone: Europe/Paris
     labels:
       - dependencies
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      timezone: Europe/Paris
-    labels:
-      - actions
