@@ -44,10 +44,7 @@ function generateList()
 {
   /**
    * Get the filetype of a specific file based on the file extension.
-   *
-   *
    * @param string filename the filename to be checked
-   *
    * @return string the file's filetype
    */
   function getFileType(filename)
@@ -124,7 +121,8 @@ function generateList()
       case 'tlz':
       case 'txz':
       case 'xz':
-      case 'zip':
+      case 'cbz':
+      case 'cbr':
         return 'archive';
 
       case 'doc':
@@ -160,23 +158,16 @@ function generateList()
       }
   }
 
-
   /**
    * Get the font awesome icon to be used for a specific filetype.
-   *
-   *
    * @param string filetype the filetype for wich an icon is required
-   *
    * @return string the HTML icon tag to be used
    */
   function getIcon(filetype)
   {
     /**
      * Get the font awesome class of the icon to be used.
-     *
-     *
      * @param string filetype the filetype for wich an icon is required
-     *
      * @return string the icon class to be used
      */
     function getFontAwesomeClass(filetype)
@@ -204,12 +195,10 @@ function generateList()
         }
     }
 
-    /* Return the file icon HTML tag to be used for the file passed to this
-     * function. */
+    /* Return the file icon HTML tag to be used for the file passed to this function. */
     return '<i class="fa fa-fw ' + getFontAwesomeClass(filetype) +
            '" aria-hidden="true"></i>';
   }
-
 
   var list = document.getElementById("list");
 
