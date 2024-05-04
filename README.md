@@ -1,6 +1,6 @@
 # Flat theme for nginx's fancyindex module
 
-[![](https://img.shields.io/github/issues-raw/alehaa/nginx-fancyindex-flat-theme.svg?style=flat-square)](https://github.com/alehaa/nginx-fancyindex-flat-theme/issues)
+[![](https://img.shields.io/github/issues-raw/3z3qu13l/nginx-fancyindex-flat-theme.svg?style=flat-square)](https://github.com/3z3qu13l/nginx-fancyindex-flat-theme/issues)
 [![](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](LICENSE)
 
 ![](doc/screenshot.png)
@@ -22,17 +22,31 @@ possible, giving the user easy access without a single line of server-side
 dynamic code.
 
 ## Prerequisites
-For developer, if you want to generate te build, you would have to install globally the following:
+A fontawesome key is required for the icons. \
+You will have to create an account and get a key for free. \
+@see https://fontawesome.com/kits
+
+For developers, if you want to generate the build, you would have to install the following. \
+Nodejs: \
+@see https://nodejs.org/en/download
+
+Libraries:
 ```sh
-npm i -g less
-npm i -g less-plugin-clean-css
+# css compiler
+npm i -g less less-plugin-clean-css
+# javascript minifier
 npm i -g uglify-js
 ```
-Also you might have to install make depending on your operating system
+Also, you might have to install make depending on your operating system.
+I used choco on Windows, but there are other possible methods:
+```sh
+# https://community.chocolatey.org/packages/make
+choco install make
+```
 
 ## Usage
 
-1. Get the latest resources from [GitHub releases](https://github.com/alehaa/nginx-fancyindex-flat-theme/releases)
+1. Get the latest resources from [GitHub releases](https://github.com/3z3qu13l/nginx-fancyindex-flat-theme/releases)
    or build them on your own by running `make` inside this repository and copy
    these files into any location accessible by *nginx*.
 2. Configure your vhost to use the theme's resources for fancyindex:
@@ -50,7 +64,6 @@ Also you might have to install make depending on your operating system
         alias /srv/www/fileserver/theme/;
     }
     ```
-
 
 ## License
 

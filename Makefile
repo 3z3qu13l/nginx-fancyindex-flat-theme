@@ -26,9 +26,6 @@ all: clean \
 	build/header.html \
 	build/footer.html
 
-clean:
-	rm -rf build
-
 # Generate the build directory if it doesn't exist yet.
 build:
 	mkdir -p build build/js
@@ -54,7 +51,7 @@ build/%.css: layout/%.less build
 # NOTE: Developers need to install uglifyjs by the platform-dependent package
 #       manager or npm.
 UGLIFYJS ?= uglifyjs
-UGLIFYJS_FLAGS = --compress --beautify
+UGLIFYJS_FLAGS = --compress
 build/js/%.js: layout/js/%.js build
 	$(UGLIFYJS) $(UGLIFYJS_FLAGS) ${} -- $< > $@
 
