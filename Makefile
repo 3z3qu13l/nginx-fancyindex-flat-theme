@@ -19,11 +19,15 @@
 # Copyright (C)
 #  2018 Alexander Haase <ahaase@alexhaase.de>
 
-all: build/theme.css         \
-     build/js/list.js        \
-     build/js/breadcrumbs.js \
-     build/header.html       \
-     build/footer.html
+all: clean \
+	build/theme.css \
+	build/js/list.js \
+	build/js/breadcrumbs.js \
+	build/header.html \
+	build/footer.html
+
+clean:
+	rm -rf build
 
 # Generate the build directory if it doesn't exist yet.
 build:
@@ -50,7 +54,7 @@ build/%.css: layout/%.less build
 # NOTE: Developers need to install uglifyjs by the platform-dependent package
 #       manager or npm.
 UGLIFYJS ?= uglifyjs
-UGLIFYJS_FLAGS = --compress --mangle --comments '/^!/'
+UGLIFYJS_FLAGS = --compress --beautify
 build/js/%.js: layout/js/%.js build
 	$(UGLIFYJS) $(UGLIFYJS_FLAGS) ${} -- $< > $@
 

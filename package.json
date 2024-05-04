@@ -16,7 +16,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "6.5.2",
     "bootstrap": "5.3.3",
     "lightbox2": "2.11.4"
+  },
+  "devDependencies": {
+    "less": "4.2.0",
+    "less-plugin-clean-css": "1.5.1",
+    "uglify-js": "3.17.4"
   }
 }

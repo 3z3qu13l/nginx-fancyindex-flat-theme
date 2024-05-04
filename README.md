@@ -21,6 +21,14 @@ the browser's preview capability, accessing the majority of files should be
 possible, giving the user easy access without a single line of server-side
 dynamic code.
 
+## Prerequisites
+For developer, if you want to generate te build, you would have to install globally the following:
+```sh
+npm i -g less
+npm i -g less-plugin-clean-css
+npm i -g uglify-js
+```
+Also you might have to install make depending on your operating system
 
 ## Usage
 
