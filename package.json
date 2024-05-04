@@ -1,6 +1,6 @@
 {
   "name": "nginx-fancyindex-flat-theme",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "[![](https://img.shields.io/github/issues-raw/3z3qu13l/nginx-fancyindex-flat-theme.svg?style=flat-square)](https://github.com/3z3qu13l/nginx-fancyindex-flat-theme/issues) [![](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](LICENSE)",
   "main": "index.js",
   "directories": {
