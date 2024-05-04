@@ -187,20 +187,19 @@ function generateList()
         case 'text':
         case 'video':
         case 'word':
-          return 'fa-file-' + filetype + '-o';
+          return `fa-file-${filetype}`;
 
         /* If none of the previous types matched, use a generic file icon. */
         default:
-          return 'fa-file-o';
+          return 'fa-file';
         }
     }
 
     /* Return the file icon HTML tag to be used for the file passed to this function. */
-    return '<i class="fa fa-fw ' + getFontAwesomeClass(filetype) +
-           '" aria-hidden="true"></i>';
+    return `<i class="fa-regular ${getFontAwesomeClass(filetype)}" aria-hidden="true"></i>`;
   }
 
-  var list = document.getElementById("list");
+  const list = document.getElementById("list");
 
   /* Remove the default style attributes and add the bootstrap table classes. By
    * default, text will be not wrapped. However, long filenames will be, as they
@@ -221,7 +220,7 @@ function generateList()
 
   /* Iterate over all rows (including the thead) to add individual classes for
    * each cell or adding new cells. */
-  for (var i = 0, row; row = list.rows[i]; i++)
+  for (let i = 0, row; row = list.rows[i]; i++)
     {
       /* Add a new cell for the file-type icon. */
       filetype = getFileType(row.cells[0].children[0].innerHTML);
