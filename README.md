@@ -1,7 +1,11 @@
 # Flat theme for nginx's fancyindex module
 
-[![](https://img.shields.io/github/issues-raw/3z3qu13l/nginx-fancyindex-flat-theme.svg?style=flat-square)](https://github.com/3z3qu13l/nginx-fancyindex-flat-theme/issues)
-[![](https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square)](LICENSE)
+<a href="https://getbootstrap.com/docs">
+    <img src="https://flat.badgen.net/badge/bootstrap/5.x/563d7c" alt="Bootstrap version">
+</a>
+<a href="https://docs.fontawesome.com/">
+    <img src="https://flat.badgen.net/badge/fontawesome/6.x/" alt="Fontawesome version">
+</a>
 
 ![](doc/screenshot.png)
 

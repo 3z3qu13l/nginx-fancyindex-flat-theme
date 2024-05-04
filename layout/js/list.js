@@ -195,8 +195,11 @@ function generateList()
         }
     }
 
-    /* Return the file icon HTML tag to be used for the file passed to this function. */
-    return `<i class="fa-regular ${getFontAwesomeClass(filetype)}" aria-hidden="true"></i>`;
+    /*
+      Return the file icon HTML tag to be used for the file passed to this function.
+      fa-regular or fa-solid can be used
+    */
+    return `<i class="fa-solid ${getFontAwesomeClass(filetype)}" aria-hidden="true"></i>`;
   }
 
   const list = document.getElementById("list");
