@@ -65,3 +65,7 @@ build/%: layout/% build
 .PHONY: clean
 clean:
 	rm -rf build layout/*.d
+
+release:
+	make build
+	tar -cvzf nginx-fancyindex-flat-theme.tar.gz build
