@@ -43,12 +43,9 @@ function generateBreadcrumbs()
 {
   /**
    * Print a single breadcrumb.
-   *
-   *
    * @param string name   the name of the breadcrumb
    * @param string url    the url of the breadcrumb
    * @param string active wheter this breadcrumb is active or not
-   *
    * @return string the breadcrumb string
    */
   function crumb(name, url, active)
@@ -76,7 +73,6 @@ function generateBreadcrumbs()
                    (i == crumbs.length - 1));
     }
 
-  /* Update the breadcrumbs element's contents with the breadcrumbs navigation
-   * generated above. */
+  /* Update the breadcrumbs element's contents with the breadcrumbs navigation generated above. */
   document.getElementById('breadcrumbs').innerHTML = nav;
 }
