@@ -237,10 +237,5 @@ function generateList()
       row.cells[1].classList.add('col', 'filename');
       row.cells[2].classList.add('col-auto', 'd-none', 'd-md-table-cell');
       row.cells[3].classList.add('col-auto', 'd-none', 'd-md-table-cell');
-
-      /* If the file is a picture, add the data attribute for lightbox2, so one
-       * is able to easily navigate through the pictures. */
-      if (filetype == 'image')
-        row.cells[1].children[0].setAttribute('data-lightbox', 'roadtrip');
     }
 }
