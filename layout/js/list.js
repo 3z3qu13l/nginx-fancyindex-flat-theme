@@ -240,7 +240,10 @@ function generateList()
 
       /* If the file is a picture, add the data attribute for lightbox2, so one
        * is able to easily navigate through the pictures. */
-      if (filetype == 'image')
-        row.cells[1].children[0].setAttribute('data-lightbox', 'roadtrip');
+      if (filetype == 'image') {
+        // Set attr for lightgallery
+        row.cells[1].children[0].classList.add('lightgallerySelector');
+        row.cells[1].children[0].setAttribute('data-src', row.children[1].children[0].href);
+      }
     }
 }

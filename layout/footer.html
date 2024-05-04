@@ -18,7 +18,18 @@
     generateBreadcrumbs();
     generateList();
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox-plus-jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/zoom/lg-zoom.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/fullscreen/lg-fullscreen.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/autoplay/lg-autoplay.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="text/javascript">
+    lightGallery(document.getElementById('lightgallery'), {
+        plugins: [lgAutoplay, lgZoom, lgFullscreen],
+        speed: 500,
+        selector: '.lightgallerySelector',
+        licenseKey: '0000-0000-000-0000'
+    });
+  </script>
 </body>
 
 </html>
