@@ -17,7 +17,7 @@
  *
  *
  * Copyright (C)
- *  2018 Alexander Haase <ahaase@alexhaase.de>
+ *  2018-2024 Alexander Haase <ahaase@alexhaase.de>
  *
  *
  * NOTE: The following comment will be used as short version of the copyright
@@ -30,7 +30,7 @@
  * General Public License. See the LICENSE file for details.
  *
  * Copyright (C)
- *  2018 Alexander Haase <ahaase@alexhaase.de>
+ *  2018-2024 Alexander Haase <ahaase@alexhaase.de>
  */
 
 /**

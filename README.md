@@ -56,4 +56,4 @@ ANY WARRANTY**; without even the implied warranty of **MERCHANTABILITY** or
 **FITNESS FOR A PARTICULAR PURPOSE**. A Copy of the GNU General Public License
 can be found in the [LICENSE](LICENSE) file.
 
-&copy; 2018 Alexander Haase
+&copy; 2018-2024 Alexander Haase
