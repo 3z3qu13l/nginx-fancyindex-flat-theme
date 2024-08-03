@@ -47,7 +47,7 @@ function generateBreadcrumbs()
    *
    * @param string name   the name of the breadcrumb
    * @param string url    the url of the breadcrumb
-   * @param string active wheter this breadcrumb is active or not
+   * @param string active whether this breadcrumb is active or not
    *
    * @return string the breadcrumb string
    */
