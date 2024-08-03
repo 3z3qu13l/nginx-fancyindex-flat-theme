@@ -24,10 +24,11 @@ dynamic code.
 
 ## Usage
 
-1. Get the latest resources from [GitHub releases](https://github.com/alehaa/nginx-fancyindex-flat-theme/releases)
-   or build them on your own by running `make` inside this repository and copy
-   these files into any location accessible by *nginx*.
-2. Configure your vhost to use the theme's resources for fancyindex:
+1. Get the latest resources from [GitHub releases][releases], or build them
+   yourself by running `make` inside this repository. Instructions on how to
+   build the resources can be found [below](#build).
+1. Copy these files into any location accessible by *nginx*.
+1. Configure your vhost to use the theme's resources for fancyindex:
     ```
     # Fancyindex
     fancyindex             on;
@@ -42,6 +43,23 @@ dynamic code.
         alias /srv/www/fileserver/theme/;
     }
     ```
+
+[releases]: https://github.com/alehaa/nginx-fancyindex-flat-theme/releases
+
+
+## Build
+
+Instead of using pre-built sources, you can build them on a local machine. For
+convenience, a [Dockerfile](Dockerfile) is provided that creates a container
+with all the necessary tools to compile the sources. You can easily build the
+theme using the following commands:
+
+```
+docker build -t fancyindex-flat .
+docker run --rm -it -v ./:/mnt -w /mnt fancyindex-flat make
+```
+
+The compiled sources for the theme will be located in the `build` directory.
 
 
 ## License
