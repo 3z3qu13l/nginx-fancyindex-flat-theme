@@ -45,10 +45,11 @@ choco install make
 
 ## Usage
 
-1. Get the latest resources from [GitHub releases](https://github.com/3z3qu13l/nginx-fancyindex-flat-theme/releases)
-   or build them on your own by running `make` inside this repository and copy
-   these files into any location accessible by *nginx*.
-2. Configure your vhost to use the theme's resources for fancyindex:
+1. Get the latest resources from [GitHub releases][releases], or build them
+   yourself by running `make` inside this repository. Instructions on how to
+   build the resources can be found [below](#build).
+2. Copy these files into any location accessible by *nginx*.
+3. Configure your vhost to use the theme's resources for fancyindex:
     ```
     # Fancyindex
     fancyindex             on;
@@ -64,6 +65,23 @@ choco install make
     }
     ```
 
+[releases]: https://github.com/alehaa/nginx-fancyindex-flat-theme/releases
+
+
+## Build
+
+Instead of using pre-built sources, you can build them on a local machine. For
+convenience, a [Dockerfile](Dockerfile) is provided that creates a container
+with all the necessary tools to compile the sources. You can easily build the
+theme using the following commands:
+
+```
+docker build -t fancyindex-flat .
+docker run --rm -it -v ./:/mnt -w /mnt fancyindex-flat make
+```
+
+The compiled sources for the theme will be located in the `build` directory.
+
 ## License
 
 The nginx-fancyindex-flat-theme is free software: you can redistribute it and/or
@@ -76,4 +94,4 @@ ANY WARRANTY**; without even the implied warranty of **MERCHANTABILITY** or
 **FITNESS FOR A PARTICULAR PURPOSE**. A Copy of the GNU General Public License
 can be found in the [LICENSE](LICENSE) file.
 
-&copy; 2018 Alexander Haase
+&copy; 2018-2024 Alexander Haase

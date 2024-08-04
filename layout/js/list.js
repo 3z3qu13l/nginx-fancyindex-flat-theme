@@ -17,7 +17,7 @@
  *
  *
  * Copyright (C)
- *  2018 Alexander Haase <ahaase@alexhaase.de>
+ *  2018-2024 Alexander Haase <ahaase@alexhaase.de>
  *
  *
  * NOTE: The following comment will be used as short version of the copyright
@@ -30,7 +30,7 @@
  * General Public License. See the LICENSE file for details.
  *
  * Copyright (C)
- *  2018 Alexander Haase <ahaase@alexhaase.de>
+ *  2018-2024 Alexander Haase <ahaase@alexhaase.de>
  */
 
 /**
@@ -160,14 +160,14 @@ function generateList()
 
   /**
    * Get the font awesome icon to be used for a specific filetype.
-   * @param string filetype the filetype for wich an icon is required
+   * @param string filetype the filetype for which an icon is required
    * @return string the HTML icon tag to be used
    */
   function getIcon(filetype)
   {
     /**
      * Get the font awesome class of the icon to be used.
-     * @param string filetype the filetype for wich an icon is required
+     * @param string filetype the filetype for which an icon is required
      * @return string the icon class to be used
      */
     function getFontAwesomeClass(filetype)
@@ -212,8 +212,8 @@ function generateList()
   list.classList.add('table', 'table-sm', 'table-hover', 'text-nowrap');
 
   /* As file size and last-modified date will be hidden at mobile devices, also
-   * hide the the table header for mobile devices, as it's unneccessary for the
-   * single remaining cell containig the filename. */
+   * hide the the table header for mobile devices, as it's unnecessary for the
+   * single remaining cell containing the filename. */
   list.tHead.children[0].classList.add('d-none', 'd-md-table-row');
 
   /* If we're in a subdirectory, remove the 'Parent Directory' row, as the

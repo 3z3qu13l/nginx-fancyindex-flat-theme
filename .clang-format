@@ -17,17 +17,17 @@
 #
 #
 # Copyright (C)
-#  2018 Alexander Haase <ahaase@alexhaase.de>
+#  2018-2024 Alexander Haase <ahaase@alexhaase.de>
 
 # This is the clang-format configuration for JavaScript files.
 #
 # Clang-format should help to beautify the code, so that every developer can
 # write code, while the beautifier will take care about the style guides. Please
-# read the README and/or docs for more informations, how to use this
+# read the README and/or docs for more information, how to use this
 # configuration with clang-format.
 
 
-# Basicaly we use LLVM style, but have some changes listet in this
+# Basically we use LLVM style, but have some changes listed in this
 # configuration.
 BasedOnStyle: LLVM
 

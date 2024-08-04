@@ -17,7 +17,7 @@
 #
 #
 # Copyright (C)
-#  2018 Alexander Haase <ahaase@alexhaase.de>
+#  2018-2024 Alexander Haase <ahaase@alexhaase.de>
 
 all: clean \
 	build/theme.css \

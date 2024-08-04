@@ -17,7 +17,7 @@
  *
  *
  * Copyright (C)
- *  2018 Alexander Haase <ahaase@alexhaase.de>
+ *  2018-2024 Alexander Haase <ahaase@alexhaase.de>
  *
  *
  * NOTE: The following comment will be used as short version of the copyright
@@ -30,7 +30,7 @@
  * General Public License. See the LICENSE file for details.
  *
  * Copyright (C)
- *  2018 Alexander Haase <ahaase@alexhaase.de>
+ *  2018-2024 Alexander Haase <ahaase@alexhaase.de>
  */
 
 /**
@@ -45,7 +45,7 @@ function generateBreadcrumbs()
    * Print a single breadcrumb.
    * @param string name   the name of the breadcrumb
    * @param string url    the url of the breadcrumb
-   * @param string active wheter this breadcrumb is active or not
+   * @param string active whether this breadcrumb is active or not
    * @return string the breadcrumb string
    */
   function crumb(name, url, active)
