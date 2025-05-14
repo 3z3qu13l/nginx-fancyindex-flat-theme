@@ -1,0 +1,1 @@
+awk '/<\/head>/{print "<style>"; system("cat build/theme.css"); print "</style>"}1' build/header.html | awk '/<\/head>/{print "<script>"; system("cat build/js/breadcrumbs.js"); system("cat build/js/list.js"); print "</script>"}1' > build/header_full.html
