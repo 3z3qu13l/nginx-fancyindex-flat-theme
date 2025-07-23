@@ -4,7 +4,7 @@
     <img src="https://flat.badgen.net/badge/bootstrap/5.x/563d7c" alt="Bootstrap version">
 </a>
 <a href="https://docs.fontawesome.com/">
-    <img src="https://flat.badgen.net/badge/fontawesome/6.x/" alt="Fontawesome version">
+    <img src="https://flat.badgen.net/badge/fontawesome/7.x/" alt="Fontawesome version">
 </a>
 
 ![](doc/screenshot.png)
