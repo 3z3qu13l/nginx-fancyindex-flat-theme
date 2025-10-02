@@ -21,7 +21,7 @@
   "author": "",
   "license": "GPLv3",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "7.0.1",
+    "@fortawesome/fontawesome-free": "7.1.0",
     "bootstrap": "5.3.8"
   },
   "devDependencies": {
