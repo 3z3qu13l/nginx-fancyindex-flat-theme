@@ -78,6 +78,18 @@ build/vendor/webfonts/%.woff2: $(FONTAWESOME)/webfonts/%.woff2
 	mkdir -p $(@D)
 	cp $< $@
 
+# URL under which nginx serves the build directory. The header loads the CSS and
+# JavaScript with absolute paths, as it is included in pages at any depth.
+#
+# The version is appended to these URLs, so browsers don't keep using an older
+# version of the theme from their cache after an update.
+#
+# NOTE: Run 'make clean all' after changing it, as make doesn't track variables.
+THEME_URL ?= /theme
+VERSION := $(shell node -p "require('./package.json').version")
+build/header.html: layout/header.html package.json | build
+	sed 's#="/theme/\([^"]*\)"#="$(THEME_URL)/\1?v=$(VERSION)"#g' $< > $@
+
 # Most of the files just need to be copied into the build directory. This rule
 # will match all files, that are not matched by any other (specialized) rule
 # above.

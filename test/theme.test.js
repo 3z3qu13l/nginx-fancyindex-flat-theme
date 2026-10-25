@@ -1,5 +1,7 @@
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 const { JSDOM } = require('jsdom');
@@ -124,4 +126,31 @@ test('list keeps all rows at the root', async () => {
   assert.deepEqual(rows.map((row) => row.cells[1].textContent), ['a.pdf', 'b.mp3']);
   assert.deepEqual(rows.map((row) => row.cells[0].querySelector('i').className),
                    ['fa-solid fa-file-pdf', 'fa-solid fa-file-audio']);
+});
+
+test('make builds the header for the URL the theme is served under', () => {
+  const root = path.join(__dirname, '..');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'flat-theme-'));
+  let urls;
+  try
+    {
+      fs.mkdirSync(path.join(dir, 'layout'));
+      for (const file of ['Makefile', 'package.json', 'layout/header.html'])
+        fs.copyFileSync(path.join(root, file), path.join(dir, file));
+
+      execFileSync('make', ['-s', '-C', dir, 'build/header.html', 'THEME_URL=/fancyindex/theme/flat-theme']);
+      urls = fs.readFileSync(path.join(dir, 'build', 'header.html'), 'utf8').match(/(?<=(href|src)=")[^"]+/g);
+    }
+  finally
+    {
+      fs.rmSync(dir, { recursive: true });
+    }
+
+  /* The version makes browsers reload the theme after an update. */
+  const v = `?v=${require('../package.json').version}`;
+  assert.deepEqual(urls, [`/fancyindex/theme/flat-theme/vendor/css/bootstrap.min.css${v}`,
+                          `/fancyindex/theme/flat-theme/vendor/css/fontawesome.min.css${v}`,
+                          `/fancyindex/theme/flat-theme/theme.css${v}`,
+                          `/fancyindex/theme/flat-theme/js/breadcrumbs.js${v}`,
+                          `/fancyindex/theme/flat-theme/js/list.js${v}`]);
 });
