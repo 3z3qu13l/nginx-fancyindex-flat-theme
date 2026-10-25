@@ -66,7 +66,11 @@
  * See the LICENSE file for details.
  */
 
-@brandColor: @green;
+/* Darker and lighter greens than @green, for a WCAG AA contrast (4.5:1): the
+ * dark one for white text and links on light backgrounds, the light one for
+ * links in the dark color scheme. */
+@brandColor:      #2e7d32;
+@brandColorLight: #81c784;
 
 /* Although imported files will be imported only once by the less compiler by
  * default, the individual files will NOT import any other less files for

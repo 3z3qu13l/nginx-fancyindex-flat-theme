@@ -45,8 +45,11 @@
     min-height: @header-height;
 
     .navbar-brand {
-        padding:     0 @header-height / 3;
-        font-size:   @header-height * 2/3;
+        /* Bootstrap sets its own brand color, which would override the white
+         * text of the header. */
+        color:       @white;
+        padding:     0 (@header-height / 3);
+        font-size:   (@header-height * 2 / 3);
         line-height: @header-height;
         height:      @header-height;
     }

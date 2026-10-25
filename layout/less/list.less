@@ -50,6 +50,20 @@
     }
 }
 
+/* The raw fancyindex table is hidden until list.js has styled it (it then has
+ * the 'table' class), to avoid a visible jump. If the script fails, the table is
+ * shown anyway after one second. */
+#list:not(.table) {
+    visibility: hidden;
+    animation:  list-fallback 0s 1s forwards;
+}
+
+@keyframes list-fallback {
+    to {
+        visibility: visible;
+    }
+}
+
 /* If the client prefers a dark color scheme, the following classes will be
  * applied to give the site a dark look and feel.
  *
