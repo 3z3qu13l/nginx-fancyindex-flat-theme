@@ -1,0 +1,97 @@
+name: Deploy
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+# Never run two deployments at the same time on the server.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Pre-releases are published for testing and must not reach production.
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    # Secrets and variables are read from this environment (Settings >
+    # Environments), which can also require a manual approval.
+    environment: production
+
+    steps:
+    - name: Check settings
+      env:
+        THEME_URL: ${{ vars.THEME_URL }}
+        DEPLOY_DIR: ${{ vars.DEPLOY_DIR }}
+      run: |
+        # A missing or malformed value would silently break the theme or deploy
+        # it to the wrong directory.
+        path='^(/[A-Za-z0-9._~-]+)+$'
+        [[ "$THEME_URL" =~ $path ]] || { echo "::error::THEME_URL must be an absolute path without trailing slash"; exit 1; }
+        [[ "$DEPLOY_DIR" =~ $path ]] || { echo "::error::DEPLOY_DIR must be an absolute path without trailing slash"; exit 1; }
+
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Install Node.js
+      uses: actions/setup-node@v7
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests
+      run: npm test
+
+    - name: Build
+      env:
+        THEME_URL: ${{ vars.THEME_URL }}
+      run: |
+        make clean all THEME_URL="$THEME_URL"
+        tar -czf flat-theme.tar.gz -C build .
+
+    - name: Configure SSH
+      env:
+        SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+      run: |
+        install -m 700 -d ~/.ssh
+        printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+        # The server's host key is pinned, so the connection fails instead of
+        # trusting an unknown server.
+        printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+        printf '%s\n' 'Host *' '  BatchMode yes' '  StrictHostKeyChecking yes' \
+          '  IdentitiesOnly yes' '  IdentityFile ~/.ssh/deploy_key' > ~/.ssh/config
+
+    - name: Deploy
+      env:
+        HOST: ${{ secrets.DEPLOY_HOST }}
+        PORT: ${{ secrets.DEPLOY_PORT }}
+        USER: ${{ secrets.DEPLOY_USER }}
+        DEPLOY_DIR: ${{ vars.DEPLOY_DIR }}
+      run: |
+        # The archive goes to the deploy directory rather than the shared /tmp,
+        # where another user of the server could replace it.
+        scp -P "$PORT" flat-theme.tar.gz "$USER@$HOST:$DEPLOY_DIR/flat-theme.tar.gz"
+        # The new version is extracted next to the current one, then swapped
+        # in, so visitors never see a half-copied theme. The previous version
+        # is kept in flat-theme.previous for a rollback.
+        ssh -p "$PORT" "$USER@$HOST" sh -s -- "$DEPLOY_DIR" <<'EOF'
+        set -e
+        cd "$1"
+        trap 'rm -f flat-theme.tar.gz' EXIT
+        rm -rf flat-theme.new
+        mkdir flat-theme.new
+        tar -xzf flat-theme.tar.gz -C flat-theme.new
+        chmod -R u=rwX,go=rX flat-theme.new
+        test -f flat-theme.new/header.html
+        test -f flat-theme.new/vendor/css/bootstrap.min.css
+        rm -rf flat-theme.previous
+        if [ -d flat-theme ]; then mv flat-theme flat-theme.previous; fi
+        mv flat-theme.new flat-theme
+        EOF

@@ -158,10 +158,15 @@ function generateList()
       }
   }
 
+  /* Icon element cloned for every row, which is much cheaper than parsing HTML
+   * for each row in large directories. */
+  const iconTemplate = document.createElement('i');
+  iconTemplate.setAttribute('aria-hidden', 'true');
+
   /**
    * Get the font awesome icon to be used for a specific filetype.
    * @param string filetype the filetype for which an icon is required
-   * @return string the HTML icon tag to be used
+   * @return HTMLElement the icon element to be used
    */
   function getIcon(filetype)
   {
@@ -196,10 +201,12 @@ function generateList()
     }
 
     /*
-      Return the file icon HTML tag to be used for the file passed to this function.
+      Return the file icon element to be used for the file passed to this function.
       fa-regular or fa-solid can be used
     */
-    return `<i class="fa-solid ${getFontAwesomeClass(filetype)}" aria-hidden="true"></i>`;
+    const icon = iconTemplate.cloneNode();
+    icon.className = `fa-solid ${getFontAwesomeClass(filetype)}`;
+    return icon;
   }
 
   const list = document.getElementById("list");
@@ -216,18 +223,28 @@ function generateList()
    * single remaining cell containing the filename. */
   list.tHead.children[0].classList.add('d-none', 'd-md-table-row');
 
-  /* If we're in a subdirectory, remove the 'Parent Directory' row, as the
-   * navigation is covered by the breadcrumbs. */
-  if (window.location.pathname != '/')
-    list.deleteRow(1);
+  /* Remove the 'Parent Directory' row, as the navigation is covered by the
+   * breadcrumbs. It is checked by its link, as fancyindex omits it at the root
+   * and with 'fancyindex_hide_parent_dir on'. */
+  const parent = list.tBodies[0].rows[0];
+  if (parent && parent.querySelector('a[href^="../"]'))
+    parent.remove();
 
   /* Iterate over all rows (including the thead) to add individual classes for
-   * each cell or adding new cells. */
-  for (let i = 0, row; row = list.rows[i]; i++)
+   * each cell or adding new cells. The rows are copied first: 'list.rows' is
+   * live and re-scanned after each inserted cell, which is quadratic. */
+  const rows = Array.from(list.rows);
+  for (let i = 0; i < rows.length; i++)
     {
+      const row = rows[i];
+
       /* Add a new cell for the file-type icon. */
-      filetype = getFileType(row.cells[0].children[0].innerHTML);
-      row.insertCell(0).innerHTML = (i > 0) ? getIcon(filetype) : '';
+      const iconCell = row.insertCell(0);
+      if (i > 0)
+        /* The link is used rather than the displayed name, which fancyindex
+         * truncates (losing the extension) beyond 'fancyindex_name_length'.
+         * Its query (the sort order, added to directory links) is ignored. */
+        iconCell.appendChild(getIcon(getFileType(row.cells[1].children[0].getAttribute('href').split('?')[0])));
 
       /* Set the classes for all cells. All cells except the filename will fit
        * their contents. The filename cell is the only allowed to wrap. The last
@@ -239,3 +256,6 @@ function generateList()
       row.cells[3].classList.add('col-auto', 'd-none', 'd-md-table-cell');
     }
 }
+
+/* Called from here instead of an inline script, so a strict CSP can be used. */
+document.addEventListener('DOMContentLoaded', generateList);

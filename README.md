@@ -20,35 +20,14 @@ just the webserver's capabilities to generate beautiful directory listings.
 This theme provides a simple, flat interface based on
 [Bootstrap 5](https://getbootstrap.com) and [Font Awesome](https://fontawesome.com).
 
-## Prerequisites
-A fontawesome key is required for the icons. \
-You will have to create an account and get a key for free. \
-@see https://fontawesome.com/kits
-
-For developers, if you want to generate the build, you would have to install the following. \
-Nodejs: \
-@see https://nodejs.org/en/download
-
-Libraries:
-```sh
-# css compiler
-npm i -g less less-plugin-clean-css
-# javascript minifier
-npm i -g uglify-js
-```
-Also, you might have to install make depending on your operating system.
-I used choco on Windows, but there are other possible methods:
-```sh
-# https://community.chocolatey.org/packages/make
-choco install make
-```
-
 ## Usage
 
 1. Get the latest resources from [GitHub releases][releases], or build them
    yourself by running `make` inside this repository. Instructions on how to
    build the resources can be found [below](#build).
-2. Copy these files into any location accessible by *nginx*.
+2. Copy these files into any location accessible by *nginx*. The theme expects
+   to be served under `/theme/`; for any other URL, build it with `THEME_URL`
+   (see [below](#serving-the-theme-under-another-url)).
 3. Configure your vhost to use the theme's resources for fancyindex:
     ```
     # Fancyindex
@@ -60,27 +39,92 @@ choco install make
     fancyindex_exact_size  off;
     fancyindex_localtime   on;
 
-    location /theme/{
+    # Optional, but recommended: all resources are served locally, so a strict
+    # Content-Security-Policy can be used. Note that 'add_header' in a location
+    # discards the ones inherited from the server block.
+    add_header Content-Security-Policy "default-src 'self'; img-src 'self' data:" always;
+    add_header X-Content-Type-Options  nosniff always;
+
+    location /theme/ {
         alias /srv/www/fileserver/theme/;
+        # Do not list the theme's own files.
+        fancyindex off;
+        # The header loads the theme with its version in the URLs, so browsers
+        # fetch it again after an update despite this cache.
+        expires 7d;
     }
     ```
 
-[releases]: https://github.com/alehaa/nginx-fancyindex-flat-theme/releases
+[releases]: https://github.com/3z3qu13l/nginx-fancyindex-flat-theme/releases
 
 
 ## Build
 
-Instead of using pre-built sources, you can build them on a local machine. For
-convenience, a [Dockerfile](Dockerfile) is provided that creates a container
-with all the necessary tools to compile the sources. You can easily build the
-theme using the following commands:
+Instead of using pre-built sources, you can build them on a local machine. You
+need [Node.js](https://nodejs.org/en/download) (the version is set in
+[.nvmrc](.nvmrc)) and `make` (on Windows, e.g. `choco install make`).
 
-```
-docker build -t fancyindex-flat .
-docker run --rm -it -v ./:/mnt -w /mnt fancyindex-flat make
+```sh
+npm ci
+npm run make
+npm test
 ```
 
 The compiled sources for the theme will be located in the `build` directory.
+`make` only rebuilds what changed; run `make clean all` for a full rebuild.
+
+`npm run merge` additionally generates `build/header_full.html`, a header with
+the theme's CSS and JavaScript inlined. It still needs the `vendor` directory,
+and its inline code is not compatible with the Content-Security-Policy above.
+
+### Serving the theme under another URL
+
+The header loads the theme's CSS and JavaScript from `/theme/`. If nginx serves
+the `build` directory under another URL, set `THEME_URL` (without trailing
+slash) and point `fancyindex_header` and `fancyindex_footer` to that URL:
+
+```sh
+make clean all THEME_URL=/fancyindex/theme/flat-theme
+```
+
+```
+fancyindex_header "/fancyindex/theme/flat-theme/header.html";
+fancyindex_footer "/fancyindex/theme/flat-theme/footer.html";
+```
+
+On Windows, run it from PowerShell: Git Bash rewrites arguments starting with
+`/` into Windows paths, unless prefixed with `MSYS_NO_PATHCONV=1`. From
+PowerShell, `make` needs Git's Unix tools in the `PATH` (e.g.
+`C:\Program Files\Git\usr\bin`).
+
+## Deployment
+
+The [Deploy](.github/workflows/deploy.yml) workflow builds, tests and copies the
+theme to a server over SSH each time a GitHub release is published (except
+pre-releases). The previous version is kept in `flat-theme.previous` next to the
+deployed `flat-theme`; to roll back, run on the server:
+
+```sh
+cd <DEPLOY_DIR> && rm -rf flat-theme && mv flat-theme.previous flat-theme
+```
+
+It reads its settings from the `production` environment (Settings >
+Environments):
+
+| Name                 | Kind     | Example                                     |
+|----------------------|----------|---------------------------------------------|
+| `DEPLOY_HOST`        | secret   | `203.0.113.10`                              |
+| `DEPLOY_PORT`        | secret   | `22`                                        |
+| `DEPLOY_USER`        | secret   | `deploy`                                    |
+| `DEPLOY_SSH_KEY`     | secret   | private key, without passphrase             |
+| `DEPLOY_KNOWN_HOSTS` | secret   | output of `ssh-keyscan -p <port> <host>`    |
+| `THEME_URL`          | variable | `/fancyindex/theme/flat-theme`              |
+| `DEPLOY_DIR`         | variable | `/srv/fancyindex/theme`                     |
+
+The SSH user needs write access to `DEPLOY_DIR`, and the server must accept SSH
+connections from GitHub's runners. Check the host keys given in
+`DEPLOY_KNOWN_HOSTS` against the server's own (`ssh-keygen -lf
+/etc/ssh/ssh_host_ed25519_key.pub`), as `ssh-keyscan` trusts whatever answers.
 
 ## License
 

@@ -38,7 +38,7 @@
  * the body. Although it won't be set for the footer (the default value from
  * bootstrap will be used), it will be defined here to be used in other files.
  */
-@footer-height: 20px;
+@footer-height: 3rem;
 
 
 /* If the content doesn't fill the entire browser window, the footer should
@@ -65,5 +65,17 @@ html {
     a:hover,
     a:focus {
         color: @brandColor;
+    }
+}
+
+/* If the client prefers a dark color scheme, links need a lighter green to stay
+ * readable on the dark background. */
+@media (prefers-color-scheme: dark) {
+    .footer {
+        a,
+        a:hover,
+        a:focus {
+            color: @brandColorLight;
+        }
     }
 }

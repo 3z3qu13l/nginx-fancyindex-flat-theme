@@ -17,7 +17,7 @@
  *
  *
  * Copyright (C)
- *  -2024 Alexander Haase <ahaase@alexhaase.de>
+ *  2018-2024 Alexander Haase <ahaase@alexhaase.de>
  */
 
 /**
@@ -41,4 +41,16 @@
     /* Breadcrumbs should be aligned with the text in the navbar-branding and
      * the directory index table. Therefore a left-padding is required. */
     padding-left: 35px;
+}
+
+/* If the client prefers a dark color scheme, links need a lighter green to stay
+ * readable on the dark background. */
+@media (prefers-color-scheme: dark) {
+    .breadcrumb {
+        .breadcrumb-item {
+            a {
+                color: @brandColorLight;
+            }
+        }
+    }
 }

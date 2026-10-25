@@ -19,12 +19,17 @@
 # Copyright (C)
 #  2018-2024 Alexander Haase <ahaase@alexhaase.de>
 
-all: clean \
-	build/theme.css \
+# Incremental build; use 'make clean all' for a full rebuild.
+.PHONY: all
+all: build/theme.css \
 	build/js/list.js \
 	build/js/breadcrumbs.js \
 	build/header.html \
-	build/footer.html
+	build/footer.html \
+	build/vendor/css/bootstrap.min.css \
+	build/vendor/css/fontawesome.min.css \
+	build/vendor/webfonts/fa-regular-400.woff2 \
+	build/vendor/webfonts/fa-solid-900.woff2
 
 # Generate the build directory if it doesn't exist yet.
 build:
@@ -33,13 +38,13 @@ build:
 # The following definitions will be used to generate CSS files from the
 # corresponding LESS files.
 #
-# NOTE: Developers need to install lessc by the platform-dependent package
-#       manager or npm.
-LESSC ?= lessc
+# NOTE: The tools of the project (installed by 'npm ci') are used rather than
+#       any global ones, whose versions may not work with the current Node.js.
+LESSC ?= node node_modules/less/bin/lessc
 LESSC_FLAGS ?= --clean-css
-build/%.css: layout/%.less build
+build/%.css: layout/%.less | build
 	$(LESSC) -M $< $@ > layout/$*.d
-	$(LESSC) $(LESSC_FLAGS) ${} $< $@
+	$(LESSC) $(LESSC_FLAGS) $< $@
 
 # Include the generated dependency list of the main less file to regenerate the
 # CSS file, if one of its imported files is touched.
@@ -48,17 +53,47 @@ build/%.css: layout/%.less build
 # The following definitions will be used to minify the JavaScript files of the
 # theme.
 #
-# NOTE: Developers need to install uglifyjs by the platform-dependent package
-#       manager or npm.
-UGLIFYJS ?= uglifyjs
+# NOTE: The project's uglifyjs (installed by 'npm ci') is used, see above.
+UGLIFYJS ?= node node_modules/uglify-js/bin/uglifyjs
 UGLIFYJS_FLAGS = --compress
-build/js/%.js: layout/js/%.js build
-	$(UGLIFYJS) $(UGLIFYJS_FLAGS) ${} -- $< > $@
+build/js/%.js: layout/js/%.js | build
+	$(UGLIFYJS) $(UGLIFYJS_FLAGS) -- $< > $@
+
+# Bootstrap and Font Awesome are served locally from the npm packages, so no
+# third-party script runs on the file server and a strict CSP can be used.
+#
+# NOTE: Run 'npm ci' before 'make' to install these packages.
+FONTAWESOME = node_modules/@fortawesome/fontawesome-free
+build/vendor/css/bootstrap.min.css: node_modules/bootstrap/dist/css/bootstrap.min.css
+	mkdir -p $(@D)
+	cp $< $@
+
+build/vendor/css/fontawesome.min.css: $(FONTAWESOME)/css/fontawesome.min.css \
+	$(FONTAWESOME)/css/regular.min.css \
+	$(FONTAWESOME)/css/solid.min.css
+	mkdir -p $(@D)
+	cat $^ > $@
+
+build/vendor/webfonts/%.woff2: $(FONTAWESOME)/webfonts/%.woff2
+	mkdir -p $(@D)
+	cp $< $@
+
+# URL under which nginx serves the build directory. The header loads the CSS and
+# JavaScript with absolute paths, as it is included in pages at any depth.
+#
+# The version is appended to these URLs, so browsers don't keep using an older
+# version of the theme from their cache after an update.
+#
+# NOTE: Run 'make clean all' after changing it, as make doesn't track variables.
+THEME_URL ?= /theme
+VERSION := $(shell node -p "require('./package.json').version")
+build/header.html: layout/header.html package.json | build
+	sed 's#="/theme/\([^"]*\)"#="$(THEME_URL)/\1?v=$(VERSION)"#g' $< > $@
 
 # Most of the files just need to be copied into the build directory. This rule
 # will match all files, that are not matched by any other (specialized) rule
 # above.
-build/%: layout/% build
+build/%: layout/% | build
 	cp $< $@
 
 # Clean the build directory.
@@ -66,6 +101,10 @@ build/%: layout/% build
 clean:
 	rm -rf build layout/*.d
 
+# Always built from scratch, so the archive never contains stale files. The
+# steps run in sequence, even with 'make -j'.
+.PHONY: release
 release:
-	make build
+	$(MAKE) clean
+	$(MAKE) all
 	tar -cvzf nginx-fancyindex-flat-theme.tar.gz build

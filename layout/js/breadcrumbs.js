@@ -42,18 +42,52 @@
 function generateBreadcrumbs()
 {
   /**
-   * Print a single breadcrumb.
+   * Create a single breadcrumb.
    * @param string name   the name of the breadcrumb
    * @param string url    the url of the breadcrumb
    * @param string active whether this breadcrumb is active or not
-   * @return string the breadcrumb string
+   * @return HTMLElement the breadcrumb element
    */
   function crumb(name, url, active)
   {
-    return '<li class="breadcrumb-item' +
-           (active ? ' active aria-current="page' : '') + '">' +
-           (active ? '' : '<a href="' + url + '">') + name +
-           (active ? '' : '</a>');
+    const item = document.createElement('li');
+    item.className = 'breadcrumb-item';
+
+    /* The name comes from the URL (i.e. a directory name) and must be set as
+     * text, never as HTML, to prevent script injection. */
+    if (active)
+      {
+        item.classList.add('active');
+        item.setAttribute('aria-current', 'page');
+        item.textContent = name;
+      }
+    else
+      {
+        const link = document.createElement('a');
+        link.href = url;
+        link.textContent = name;
+        item.appendChild(link);
+      }
+
+    return item;
+  }
+
+  /**
+   * Decode a path segment of the URL.
+   * @param string segment the URL-encoded segment
+   * @return string the decoded segment, or the segment itself if it isn't valid
+   *                UTF-8 (e.g. directory names in Latin-1)
+   */
+  function decode(segment)
+  {
+    try
+      {
+        return decodeURIComponent(segment);
+      }
+    catch (e)
+      {
+        return segment;
+      }
   }
 
   /* Get the path of the current directory and split it into the list of paths.
@@ -64,15 +98,15 @@ function generateBreadcrumbs()
   /* Iterate over the breadcrumbs and generate a link for each crumb. The home
    * directory will have the special name 'Home' and the current directory will
    * not be a link, but just plain text. */
-  var nav = '';
+  var nav = document.getElementById('breadcrumbs');
   var path = '';
   for (var i = 0; i < crumbs.length; i++)
     {
       path += crumbs[i] + '/';
-      nav += crumb((i == 0) ? 'Home' : decodeURIComponent(crumbs[i]), path,
-                   (i == crumbs.length - 1));
+      nav.appendChild(crumb((i == 0) ? 'Home' : decode(crumbs[i]), path,
+                            (i == crumbs.length - 1)));
     }
-
-  /* Update the breadcrumbs element's contents with the breadcrumbs navigation generated above. */
-  document.getElementById('breadcrumbs').innerHTML = nav;
 }
+
+/* Called from here instead of an inline script, so a strict CSP can be used. */
+document.addEventListener('DOMContentLoaded', generateBreadcrumbs);
