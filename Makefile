@@ -19,8 +19,9 @@
 # Copyright (C)
 #  2018-2024 Alexander Haase <ahaase@alexhaase.de>
 
-all: clean \
-	build/theme.css \
+# Incremental build; use 'make clean all' for a full rebuild.
+.PHONY: all
+all: build/theme.css \
 	build/js/list.js \
 	build/js/breadcrumbs.js \
 	build/header.html \
@@ -37,13 +38,13 @@ build:
 # The following definitions will be used to generate CSS files from the
 # corresponding LESS files.
 #
-# NOTE: Developers need to install lessc by the platform-dependent package
-#       manager or npm.
-LESSC ?= lessc
+# NOTE: The tools of the project (installed by 'npm ci') are used rather than
+#       any global ones, whose versions may not work with the current Node.js.
+LESSC ?= node node_modules/less/bin/lessc
 LESSC_FLAGS ?= --clean-css
-build/%.css: layout/%.less build
+build/%.css: layout/%.less | build
 	$(LESSC) -M $< $@ > layout/$*.d
-	$(LESSC) $(LESSC_FLAGS) ${} $< $@
+	$(LESSC) $(LESSC_FLAGS) $< $@
 
 # Include the generated dependency list of the main less file to regenerate the
 # CSS file, if one of its imported files is touched.
@@ -52,12 +53,11 @@ build/%.css: layout/%.less build
 # The following definitions will be used to minify the JavaScript files of the
 # theme.
 #
-# NOTE: Developers need to install uglifyjs by the platform-dependent package
-#       manager or npm.
-UGLIFYJS ?= uglifyjs
+# NOTE: The project's uglifyjs (installed by 'npm ci') is used, see above.
+UGLIFYJS ?= node node_modules/uglify-js/bin/uglifyjs
 UGLIFYJS_FLAGS = --compress
-build/js/%.js: layout/js/%.js build
-	$(UGLIFYJS) $(UGLIFYJS_FLAGS) ${} -- $< > $@
+build/js/%.js: layout/js/%.js | build
+	$(UGLIFYJS) $(UGLIFYJS_FLAGS) -- $< > $@
 
 # Bootstrap and Font Awesome are served locally from the npm packages, so no
 # third-party script runs on the file server and a strict CSP can be used.
@@ -81,7 +81,7 @@ build/vendor/webfonts/%.woff2: $(FONTAWESOME)/webfonts/%.woff2
 # Most of the files just need to be copied into the build directory. This rule
 # will match all files, that are not matched by any other (specialized) rule
 # above.
-build/%: layout/% build
+build/%: layout/% | build
 	cp $< $@
 
 # Clean the build directory.
@@ -89,6 +89,10 @@ build/%: layout/% build
 clean:
 	rm -rf build layout/*.d
 
+# Always built from scratch, so the archive never contains stale files. The
+# steps run in sequence, even with 'make -j'.
+.PHONY: release
 release:
-	make build
+	$(MAKE) clean
+	$(MAKE) all
 	tar -cvzf nginx-fancyindex-flat-theme.tar.gz build
