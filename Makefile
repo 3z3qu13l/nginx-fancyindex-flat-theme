@@ -24,7 +24,11 @@ all: clean \
 	build/js/list.js \
 	build/js/breadcrumbs.js \
 	build/header.html \
-	build/footer.html
+	build/footer.html \
+	build/vendor/css/bootstrap.min.css \
+	build/vendor/css/fontawesome.min.css \
+	build/vendor/webfonts/fa-regular-400.woff2 \
+	build/vendor/webfonts/fa-solid-900.woff2
 
 # Generate the build directory if it doesn't exist yet.
 build:
@@ -54,6 +58,25 @@ UGLIFYJS ?= uglifyjs
 UGLIFYJS_FLAGS = --compress
 build/js/%.js: layout/js/%.js build
 	$(UGLIFYJS) $(UGLIFYJS_FLAGS) ${} -- $< > $@
+
+# Bootstrap and Font Awesome are served locally from the npm packages, so no
+# third-party script runs on the file server and a strict CSP can be used.
+#
+# NOTE: Run 'npm ci' before 'make' to install these packages.
+FONTAWESOME = node_modules/@fortawesome/fontawesome-free
+build/vendor/css/bootstrap.min.css: node_modules/bootstrap/dist/css/bootstrap.min.css
+	mkdir -p $(@D)
+	cp $< $@
+
+build/vendor/css/fontawesome.min.css: $(FONTAWESOME)/css/fontawesome.min.css \
+	$(FONTAWESOME)/css/regular.min.css \
+	$(FONTAWESOME)/css/solid.min.css
+	mkdir -p $(@D)
+	cat $^ > $@
+
+build/vendor/webfonts/%.woff2: $(FONTAWESOME)/webfonts/%.woff2
+	mkdir -p $(@D)
+	cp $< $@
 
 # Most of the files just need to be copied into the build directory. This rule
 # will match all files, that are not matched by any other (specialized) rule
