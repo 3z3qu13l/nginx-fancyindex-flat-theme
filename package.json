@@ -24,7 +24,7 @@
     "bootstrap": "5.3.8"
   },
   "devDependencies": {
-    "jsdom": "31.0.0",
+    "jsdom": "31.0.1",
     "less": "4.9.1",
     "less-plugin-clean-css": "1.6.0",
     "uglify-js": "3.19.3"
